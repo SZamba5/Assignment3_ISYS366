@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Assignment3.Data;
 using RazorPagesMovie.Models;
+using RazorPagesMovie.Helpers;
 
 namespace Assignment3.Pages.Movies
 {
@@ -26,6 +27,7 @@ namespace Assignment3.Pages.Movies
 
         [BindProperty]
         public Movie Movie { get; set; } = default!;
+        public IFormFile? imageFile { get; set; }
 
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
@@ -33,6 +35,12 @@ namespace Assignment3.Pages.Movies
             if (!ModelState.IsValid)
             {
                 return Page();
+            }
+
+            // Handle image upload
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                Movie.ImageUrl = await ImageHandler.SaveImageAsync(imageFile); // Save image and get path
             }
 
             _context.Movie.Add(Movie);
